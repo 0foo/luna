@@ -65,9 +65,8 @@ luna seed run <seedfile> <count>
 luna seed run users 10
 ```
 
-✅  
-Generates 10 fake users based on your `users.yaml` seed file  
-and inserts them into the `users` table.
+ 
+* Generates 10 fake users based on your `users.yaml` seed file and inserts them into the `users` table.
 
 **Example `users.yaml` file:**
 
@@ -79,9 +78,9 @@ password: password|length=12
 gender: gender
 ```
 
-✅  
-Supports faker parameters (like `length=12`, `words=5`, etc.)
-
+* Supports faker parameters (like `length=12`, `words=5`, etc.)
+* The table name to seed is determined by the yaml filename.
+* Each field is a database column and each value is a gofakeit function.
 ---
 
 ### 3. `luna db`
@@ -113,9 +112,6 @@ Luna expects a simple `config.yaml` file with database connection settings:
 db_url: "postgres://admin:password@localhost:5432/yourdb?sslmode=disable"
 ```
 
-✅  
-Load your database URL securely from configuration.
-
 ---
 
 ## Example Workflows
@@ -138,28 +134,4 @@ luna seed run users 50
 luna db raw "SELECT tablename FROM pg_tables WHERE schemaname='public';"
 ```
 
-✅
 
----
-
-## Roadmap
-
-- [ ] Add migration rollback (`down`) support
-- [ ] Add database backup/restore CLI
-- [ ] Add custom faker templates
-- [ ] Add automatic seeding on environment setup
-
----
-
-# Summary
-
-✅  
-Luna is designed to be:
-
-- Lightweight
-- Practical
-- Extendable
-- Fake-data and migration friendly for local development
-
-✅  
-Built for fast dev workflows.
