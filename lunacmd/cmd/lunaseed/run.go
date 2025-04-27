@@ -68,6 +68,6 @@ func RunMe(cmd *cobra.Command, args []string) {
 		fmt.Println("Database seed failed:", err)
 		os.Exit(1)
 	}
-
+	fmt.Println("Note: there may be less seeds than specified as the seeder will skip randomly generated rows that violate foreign relations.")
 	fmt.Println("Seeding complete")
 }
