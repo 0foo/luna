@@ -1,0 +1,1 @@
+db_url: "postgres://admin:Postgres1098!@localhost:5432/postgres?sslmode=disable"

@@ -1,0 +1,4 @@
+first_name: firstname
+last_name: lastname
+email: email
+password: randomstring|length=8
