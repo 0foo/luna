@@ -71,11 +71,36 @@ func BuildBatchInsertStatement(tableName string, rows []map[string]string) (stri
 	}
 
 	query := fmt.Sprintf(
-		"INSERT INTO \"%s\" (%s) VALUES %s",
+		"INSERT INTO \"%s\" (%s) VALUES %s ON CONFLICT DO NOTHING",
 		tableName,
 		strings.Join(columns, ", "),
 		strings.Join(valueGroups, ", "),
 	)
 
 	return query, values, nil
+
+}
+func LoadIDsFromTable(tableName string, idColumn string) ([]int, error) {
+
+	db, err := sql.Open("postgres", config.ConfigValues.DbURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+	defer db.Close()
+
+	rows, err := db.Query(fmt.Sprintf("SELECT %s FROM %s", idColumn, tableName))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
 }

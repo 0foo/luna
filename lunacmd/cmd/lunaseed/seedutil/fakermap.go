@@ -2,6 +2,7 @@ package seedutil
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -145,6 +146,22 @@ var FakerMap = map[string]func(params map[string]string) (string, error){
 		return gofakeit.LetterN(uint(length)), nil
 	},
 	"randomdigit": func(params map[string]string) (string, error) {
+		if startStr, okStart := params["start"]; okStart {
+			if endStr, okEnd := params["end"]; okEnd {
+				start, err1 := strconv.Atoi(startStr)
+				end, err2 := strconv.Atoi(endStr)
+				if err1 != nil || err2 != nil {
+					return "", fmt.Errorf("invalid start or end parameter")
+				}
+				if start > end {
+					return "", fmt.Errorf("start must be less than or equal to end")
+				}
+				value := gofakeit.Number(start, end)
+				return strconv.Itoa(value), nil
+			}
+		}
+
+		// fallback to length
 		length := 8
 		if l, ok := params["length"]; ok {
 			if n, err := strconv.Atoi(l); err == nil {
@@ -204,6 +221,70 @@ var FakerMap = map[string]func(params map[string]string) (string, error){
 	"hexcolor": func(params map[string]string) (string, error) {
 		return gofakeit.HexColor(), nil
 	},
+	"sentence": func(params map[string]string) (string, error) {
+		wordCount := 10
+		if val, ok := params["words"]; ok {
+			parsed, err := strconv.Atoi(val)
+			if err == nil {
+				wordCount = parsed
+			}
+		}
+		return gofakeit.Sentence(wordCount), nil
+	},
+
+	"paragraph": func(params map[string]string) (string, error) {
+		numParagraphs := 1
+		sentencesPerParagraph := 3
+		wordsPerSentence := 12
+
+		if val, ok := params["paragraphs"]; ok {
+			parsed, err := strconv.Atoi(val)
+			if err == nil {
+				numParagraphs = parsed
+			}
+		}
+		if val, ok := params["sentences"]; ok {
+			parsed, err := strconv.Atoi(val)
+			if err == nil {
+				sentencesPerParagraph = parsed
+			}
+		}
+		if val, ok := params["words"]; ok {
+			parsed, err := strconv.Atoi(val)
+			if err == nil {
+				wordsPerSentence = parsed
+			}
+		}
+
+		return gofakeit.Paragraph(numParagraphs, sentencesPerParagraph, wordsPerSentence, " "), nil
+	},
+	"timestamp": func(params map[string]string) (string, error) {
+		return gofakeit.Date().Format("2006-01-02 15:04:05"), nil
+	},
+	"static": func(params map[string]string) (string, error) {
+		val, ok := params["value"]
+		if !ok {
+			return "", fmt.Errorf("missing 'value' parameter for static")
+		}
+		return val, nil
+	},
+	"existingid": func(params map[string]string) (string, error) {
+		table, ok := params["table"]
+		if !ok || table == "" {
+			return "", fmt.Errorf("missing 'table' parameter for existingid")
+		}
+
+		ids, err := LoadIDsFromTable(table, "id")
+		if err != nil {
+			return "", err
+		}
+		if len(ids) == 0 {
+			return "", fmt.Errorf("no IDs found in table '%s'", table)
+		}
+
+		randomIndex := rand.Intn(len(ids))
+		return strconv.Itoa(ids[randomIndex]), nil
+	},
+
+
 }
-
-
