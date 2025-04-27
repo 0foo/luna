@@ -136,5 +136,6 @@ luna db raw "SELECT tablename FROM pg_tables WHERE schemaname='public';"
 
 
 ## Roadmap
+* Support for more DB's 
 * The functionality to pass a 'create' flag with a list of parameters/type and luna will create both a migration and a seed(much like Laravel's artisan tool, but more generic)
 * Better formatting for db output like how psql outputs it's results.
